@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{problem.Name}}</title>
+    <link rel="stylesheet" href="/static/css/Problem.css?{% now 'U' %}">
+    <script src="/static/js/Script.js?{% now 'U' %}"></script>
+    <link rel = "shortcut icon" href="{% static 'images/logo-for-title.png' %}" >
+</head>
+<body class="body">
+
+    <div class="navbar">
+        <div class="left-div">
+            <img src="{% static 'images/logo-image.png' %}" class="logo-image">
+            <h3 class="title">PROBLEM SOLVING COMPETITION</h3>
+            <h3 class="subtitle">Sustainable development through computer science</h3>
+        </div>
+        <div class="right-div">
+            <li><a href="{% url 'home' %}" class="link">Accueil</a></li>
+            <li><a href="{% url 'ranking' %}" class="link">Classement</a></li>
+            <li><a href="{% url 'logout' %}" class="link">Se déconnecter</a></li>
+        </div>
+    </div>
+
+    <div class="simulation-problem">
+        <img class="problem-image" src="{{problem.Statement_Url}}">
+    </div>
+    <div class="coding">
+        <div class="info">
+            <h3 id="max-score">SCORE:{{problem.Score}}</h3>
+            <h3 id="game-name">{{problem.Name}}</h3>
+            <select id="languages" class="languages" onchange="changeLanguage()">
+                <option value="python3" selected="selected"> Python3 </option>
+            </select>
+        </div>
+        <div class="editor" id="editor" contenteditable="true">{{advancement.Wrote_Code}}</div>
+        <div class="test-zone">
+            <div class="Total">
+                <h3 id="score-total" style="color:{{advancement.Color}}">SCORE TOTAL:{{advancement.Score}}</h3>
+                <h3 id="pourcentage-total" style="color:{{advancement.Color}}">POURCENTAGE:{{advancement.Percentage}}%</h3>
+                <button class="lunch" id="lunch" onclick="LunchTests()">Lancer les tests</button>
+
+            </div>
+            <div id="exampleBlock" style="display: none;">
+                <div class="test-ids">
+                    {% for id in Ids %}
+                        <h3 class="sample-test" id="{{id}}" onclick="change(this.id)">Sample Test {{id}}</h3>
+                    {% endfor %}
+                </div>
+                {% for id in Ids %}
+                <div id="running_zone-{{id}}" class="running-zone">
+                    {% for ele in running_items %}
+                    <div class="block">
+                        <span class="span">{{ele}}</span>
+                        <pre>
+                            <code id="{{ele}}-{{id}}">
+
+                            </code>
+                        </pre>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+            <div id="table">
+                <div class="wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>SCORE</th>
+                            <th>RESULT</th>
+                            <th> </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ele in results %}
+
+                        <tr class="pass">
+                            <td class="rank" id="test{{ele.0}}" style="color:{{ele.3}}; font-weight:bold;">{{ele.0}}</td>
+                            <td class="team" id="score{{ele.0}}" style="color:{{ele.3}}; font-weight:bold;">{{ele.1}}</td>
+                            <td class="score" id="pourcentage{{ele.0}}" style="color:{{ele.3}}; font-weight:bold;">{{ele.2}}</td>
+                        </tr>
+
+                        {% endfor %}
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        </div>
+    </div>
+
+</body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'js/lib/ace.js' %}"></script>
+    <script src="{% static 'js/lib/theme-monokai.js' %}"></script>
+
+</html>
