@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Accueil</title>
+    <link rel="stylesheet"  href="/static/css/Home.css?{% now 'U' %}">
+    <link rel = "shortcut icon" href="{% static 'images/logo-for-title.png' %}" >
+    <link rel="stylesheet" type="text/css" href="/static/css/loading-bar.css?{% now 'U' %}" />
+    <script type="text/javascript" src="{% static 'js/loading-bar.js' %}"></script>
+</head>
+<body>
+   <div class="navbar">
+        <div class="left-div">
+            <img src="{% static 'images/logo-image.png' %}" class="logo-image">
+            <h3 class="title">PROBLEM SOLVING COMPETITION</h3>
+            <h3 class="subtitle">Sustainable development through computer science</h3>
+        </div>
+        <div class="right-div">
+            <li><a href="{% url 'home' %}" class="link">Accueil</a></li>
+            <li><a href="{% url 'ranking' %}" class="link">Classement</a></li>
+            <li><a href="{% url 'logout' %}" class="link">Se déconnecter</a></li>
+        </div>
+    </div>
+
+    <div class="name-score">
+        <h3 class="name">Bon courage {{participant.Username}}</h3>
+        <h3 class="score">Votre score:{{participant.Score}}</h3>
+    </div>
+
+    <div class="games">
+        {% for list in info%}
+        <div class="game">
+            <img src="{{list.0.Image_Url}}" class="img">
+            <div class="title-score">
+                <h3 class="game-title">{{list.0.Name}}</h3>
+                <h3 class="score-value">Score:{{list.0.Score}}</h3>
+                <div class="meter">
+                    <span style="width: {{list.1.0}}%; background-color:{{list.1.1}}"></span>
+                </div>
+                <h3 class="percentage">{{list.1.0}}%</h3>
+                <button class="play"><a id="link" href="{% url 'problem' list.0.id %}">Résoudre</a></button>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+
+
+</body>
+
+</html>
