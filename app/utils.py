@@ -68,8 +68,10 @@ def get_response(request, user_code, id):
     code = "{}\n{}".format(user_code, server_code)
     for index, test in enumerate(tests):
         output = get_output(code, test.Input)
-        if "|" not in output or output == "error":
+        if "|" not in output :
             results.append("{},{},Error,red".format(test.Test_Id, 0))
+        elif output == "error":
+             results.append("{},{},RunningTime,red".format(test.Test_Id, 0))
         else:
             output = output.split("|")
             result_of_test = output[0]
@@ -78,13 +80,13 @@ def get_response(request, user_code, id):
             if running_time <= problem.Time_Limit_Per_Test:
                 if result_of_test == test.Expected_Output:
                     results.append(
-                        "{},{},{},green".format(test.Test_Id, test.Score,running_time)
+                        "{},{},Accepted,green".format(test.Test_Id, test.Score)
                     )
                     Total_Score += test.Score
                 else:
-                    results.append("{},{},{},red".format(test.Test_Id, 0,running_time))
+                    results.append("{},{},WrongAnswer,red".format(test.Test_Id, 0))
             else:
-                results.append("{},{},{},red".format(test.Test_Id, 0,running_time))
+                results.append("{},{},RunningTime,red".format(test.Test_Id, 0))
     Total_Score, percentage = get_score_percentage(Total_Score, request, id)
     color = get_color(percentage)
     information = [Total_Score, percentage, color, " ".join(results)]
