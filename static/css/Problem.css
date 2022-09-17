@@ -58,11 +58,17 @@ float: left;
     font-family:arial;
 
 }
-
+#spinner{
+  width:2.6vw;
+  height:2.6vw;
+  margin-left: 0;
+  display: none;
+}
 .right-div{
 width:42%;
 height:100%;
 margin-left:58%;
+
 }
 li a:hover {
   color: #989c9b;
@@ -180,10 +186,11 @@ background-color:#574f57;
 font-size:1vw;
 color:white;
 font-weight:bold;
-margin-left:7.5vw;
+margin-left: 30vw;
 border: 0;
 border-radius: 100px;
 cursor: pointer;
+float: left;
 }
 
 #lunch{

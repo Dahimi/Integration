@@ -39,8 +39,9 @@
             <div class="Total">
                 <h3 id="score-total" style="color:{{advancement.Color}}">SCORE TOTAL:{{advancement.Score}}</h3>
                 <h3 id="pourcentage-total" style="color:{{advancement.Color}}">POURCENTAGE:{{advancement.Percentage}}%</h3>
+                
                 <button class="lunch" id="lunch" onclick="LunchTests()">Lancer les tests</button>
-
+                <div><img   id="spinner" src="/static/images/loading.gif"></div>
             </div>
             <div id="exampleBlock" style="display: none;">
                 <div class="test-ids">
@@ -68,9 +69,9 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>NUM</th>
                             <th>SCORE</th>
-                            <th>RESULT</th>
+                            <th>RESULTATS</th>
                             <th> </th>
                         </tr>
                     </thead>

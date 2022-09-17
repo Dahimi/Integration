@@ -4,6 +4,7 @@ import json
 import pandas as pd
 import django.contrib.auth
 from django.db.models import Q
+import subprocess
 
 
 def get_participant(request):
@@ -17,7 +18,7 @@ def get_advancement(problem, participant):
         advancement = Advancement.objects.get(Problem_Id=problem.id, Participant_Id=participant.id)
     except:
 
-        List = ["{},0,0%,black".format(i+1) for i in range(problem.Number_Of_Tests)]
+        List = ["{},0,-,black".format(i+1) for i in range(10)]
         advancement = Advancement(Problem_Id=problem.id, Participant_Id=participant.id,
                                   Results=" ".join(List), Wrote_Code=problem.Python_User_Code)
         advancement.save()
@@ -26,43 +27,16 @@ def get_advancement(problem, participant):
     return advancement, results
 
 
-def get_Input(id):
-    tests = Test.objects.filter(Problem_Id=id, Type="submit").order_by('Test_Id')
-    inputs = [test.Input.replace("\r", "") for test in tests]
-    return "\n".join(inputs)
-
-
-def get_outputs(code, Input):
-    language = "python3"
-    conn = http.client.HTTPSConnection("api.jdoodle.com")
-    payload = json.dumps({
-        "script": code,
-        "language": language,
-        "stdin": Input,
-        "versionIndex": "0",
-        "clientId": "b5b89aead5686391c071fdc29db5169",
-        "clientSecret": "75bcee08f44431434b50aac5cfd69d8a00e83c2188ec29ae65eb688858ddc1b2"
-    })
-    headers = {
-        'Content-Type': 'application/json'
-    }
-    conn.request("POST", "/v1/execute", payload, headers)
-    res = conn.getresponse()
-    data = res.read()
-    string_output = data.decode("utf-8")
-    dictionary_output = json.loads(string_output)
-    print(dictionary_output)
-    results = dictionary_output['output'].rstrip("\n").split("\n")
-    outputs = []
-    for result in results:
-        try:
-            l = result.split("|")
-            Tuple = (l[0], float(l[1]))
-            outputs.append(Tuple)
-        except:
-            outputs = "error"
-            break
-    return outputs
+def get_output(code, Input):
+    f = open("static/PythonScripts/code.py", "w")
+    f.write(code)
+    f.close()
+    proc = subprocess.Popen(['python', "static/PythonScripts/code.py", Input], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    try:
+        output = proc.communicate(timeout=5)[0].decode()
+        return output
+    except:
+        return "error"
 
 
 def get_color(percentage):
@@ -79,25 +53,26 @@ def get_response(request, user_code, id):
     results = []
     Total_Score = 0
     problem = Problem.objects.get(id=id)
+    tests = Test.objects.filter(Problem_Id=id).order_by('Test_Id')
     server_code = problem.Python_Server_Code
     code = "{}\n{}".format(user_code, server_code)
-    Input = get_Input(id)
-    outputs = get_outputs(code, Input)
-    if outputs == "error":
-        results = ["{},0,Error,red".format(i) for i in range(1, 11)]
-    else:
-        for index, output in enumerate(outputs):
-            test = Test.objects.get(Problem_Id=problem.id, Test_Id=index+1, Type="submit")
-            result_of_test, running_time = output
+    for index, test in enumerate(tests):
+        output = get_output(code, test.Input)
+        if '|' not in output or output == "error":
+            results.append("{},{},Error,red".format(test.Test_Id, 0))
+        else:
+            output = output.split("|")
+            result_of_test = output[0]
+            print(result_of_test)
+            running_time = float(output[1])
             if running_time <= problem.Time_Limit_Per_Test:
                 if result_of_test == test.Expected_Output:
                     results.append("{},{},Passed,green".format(test.Test_Id, test.Score))
                     Total_Score += test.Score
                 else:
-                    results.append("{},{},WrongAnswer,red".format(test.Test_Id, test.Score))
+                    results.append("{},{},WrongAnswer,red".format(test.Test_Id, 0))
             else:
-                results.append("{},{},RunningTime,red".format(test.Test_Id, test.Score))
-    print(Total_Score)
+                results.append("{},{},RunningTime,red".format(test.Test_Id, 0))
     Total_Score, percentage = get_score_percentage(Total_Score, request, id)
     color = get_color(percentage)
     information = [Total_Score, percentage, color, " ".join(results)]
@@ -110,8 +85,8 @@ def get_score_percentage(score, request, id):
     problem = Problem.objects.get(id=id)
     participant = get_participant(request)
     advancement = Advancement.objects.get(Problem_Id=id, Participant_Id=participant.id)
-    NewScore = round(score-advancement.Number_Of_Tests * 0.01 * problem.Score, 2)
-    percentage = round(100 * NewScore / problem.Score, 2)
+    NewScore = int(score-advancement.Number_Of_Tests * 0.01 * problem.Score)
+    percentage = int(100 * NewScore / problem.Score)
     if NewScore >= 0 and percentage >= 0:
         return NewScore, percentage
     return 0, 0
@@ -150,7 +125,6 @@ def fill_problem(path):
                           Score=row["score"],
                           Python_User_Code=row["python_user_code"],
                           Python_Server_Code=row["python_server_code"],
-                          Number_Of_Tests=10,
                           Time_Limit_Per_Test=row["time_limit"])
         problem.save()
 
@@ -164,7 +138,6 @@ def fill_test(path):
                     Test_Id=row["test_id"],
                     Input=row["input"],
                     Expected_Output=row["expected_output"],
-                    Type="submit",
                     Score=row["score"])
 
         test.save()

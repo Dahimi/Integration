@@ -34,7 +34,6 @@ class Problem(models.Model):
     Python_User_Code = models.TextField(default="#write your code here")
     Python_Server_Code = models.TextField(default="#write your code here")
     Score = models.IntegerField()
-    Number_Of_Tests = models.IntegerField()
     Time_Limit_Per_Test = models.FloatField(default=1)
 
     def __str__(self):
@@ -46,7 +45,6 @@ class Test(models.Model):
     Test_Id = models.IntegerField()
     Input = models.TextField()
     Expected_Output = models.TextField()
-    Type = models.CharField(max_length=10)
     Score = models.IntegerField()
 
     def __str__(self):

@@ -1,3 +1,4 @@
+from time import time, sleep
 from django.shortcuts import render, HttpResponse, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login, logout, authenticate
@@ -12,10 +13,7 @@ def Solve_Problem(request, id):
     problem = Problem.objects.get(id=id)
     participant = get_participant(request)
     advancement, results = get_advancement(problem, participant)
-    running_items = ["Input", "Your output", "Expected output"]
-    Ids = list(range(1, len(Test.objects.filter(Problem_Id=id, Type="run"))+1))
-    context = {'problem':problem, 'advancement':advancement, 'results':results,
-               'running_items':running_items, 'Ids':Ids}
+    context = {'problem':problem, 'advancement':advancement, 'results':results}
     return render(request, "Problem.html", context)
 
 
@@ -63,12 +61,7 @@ def Lunch_Tests(request, id):
     response, information = get_response(request, user_code, id)
     Update_Advancement(request, id, user_code, information)
     Update_Score(request)
+    sleep(2)
     return HttpResponse(response)
 
 
-@csrf_exempt
-def Run(request, id):
-    game = Problem.objects.get(id=id)
-    code = request.POST["code"]
-    response = "1,4 3\n1 7 2 4,3,3,green-2,1 1\n1,1,0,red"
-    return HttpResponse(response)
