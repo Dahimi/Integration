@@ -44,7 +44,6 @@ def get_output(code, Input):
     )
     try:
         output = proc.communicate(timeout=5)[0].decode()
-        
         return output
     except:
         return "error"
