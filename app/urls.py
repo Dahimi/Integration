@@ -9,5 +9,4 @@ urlpatterns = [
     path('logout/', views.Logout, name='logout'),
     path('Problem/<int:id>/', views.Solve_Problem, name='problem'),
     path('Ranking/', views.Ranking, name='ranking'),
-    path('Problem/<int:id>/my-ajax-run/', views.Run),
 ]
