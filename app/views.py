@@ -62,10 +62,10 @@ def Ranking(request):
 
 @csrf_exempt
 def Lunch_Tests(request, id):
+
     user_code = request.POST["code"]
     response, information = get_response(request, user_code, id)
     Update_Advancement(request, id, user_code, information)
     Update_Score(request)
-    sleep(2)
 
     return HttpResponse(response)
