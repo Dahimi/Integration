@@ -78,13 +78,13 @@ def get_response(request, user_code, id):
             if running_time <= problem.Time_Limit_Per_Test:
                 if result_of_test == test.Expected_Output:
                     results.append(
-                        "{},{},Passed,green".format(test.Test_Id, test.Score)
+                        "{},{},{},green".format(test.Test_Id, test.Score,running_time)
                     )
                     Total_Score += test.Score
                 else:
-                    results.append("{},{},WrongAnswer,red".format(test.Test_Id, 0))
+                    results.append("{},{},{},red".format(test.Test_Id, 0,running_time))
             else:
-                results.append("{},{},RunningTime,red".format(test.Test_Id, 0))
+                results.append("{},{},{},red".format(test.Test_Id, 0,running_time))
     Total_Score, percentage = get_score_percentage(Total_Score, request, id)
     color = get_color(percentage)
     information = [Total_Score, percentage, color, " ".join(results)]
