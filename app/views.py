@@ -20,7 +20,7 @@ def Solve_Problem(request, id):
 def Home(request):
     # fill_problem(r"C:\Users\hamza.thaifa\Desktop\problems.xlsx")
     # fill_test(r"C:\Users\hamza.thaifa\Desktop\tests.xlsx")
-    # fill_participant_user(r"C:\Users\hamza.thaifa\Desktop\Participants.xlsx")
+    #fill_participant_user("Participants.xlsx")
     problems = Problem.objects.all()
     participant = get_participant(request)
     advancements = [get_percentage_color(problem, participant) for problem in problems]
