@@ -33,12 +33,12 @@ def get_advancement(problem, participant):
     return advancement, results
 
 
-def get_output(code, Input):
-    f = open("static/PythonScripts/code{}.py".format(get_participant().Username), "w")
+def get_output(code, Input,request):
+    f = open("static/PythonScripts/code{}.py".format(get_participant(request).Username), "w")
     f.write(code)
     f.close()
     proc = subprocess.Popen(
-        ["python", "static/PythonScripts/code{}.py".format(get_participant().Username), Input],
+        ["python", "static/PythonScripts/code{}.py".format(get_participant(request).Username), Input],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
     )
@@ -67,7 +67,7 @@ def get_response(request, user_code, id):
     server_code = problem.Python_Server_Code
     code = "{}\n{}".format(user_code, server_code)
     for index, test in enumerate(tests):
-        output = get_output(code, test.Input)
+        output = get_output(code, test.Input, request)
         if "|" not in output :
             results.append("{},{},Error,red".format(test.Test_Id, 0))
         elif output == "error":
