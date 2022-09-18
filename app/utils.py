@@ -34,11 +34,11 @@ def get_advancement(problem, participant):
 
 
 def get_output(code, Input):
-    f = open("static/PythonScripts/code.py", "w")
+    f = open("static/PythonScripts/code{}.py".format(get_participant().Username), "w")
     f.write(code)
     f.close()
     proc = subprocess.Popen(
-        ["python", "static/PythonScripts/code.py", Input],
+        ["python", "static/PythonScripts/code{}.py".format(get_participant().Username), Input],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
     )
